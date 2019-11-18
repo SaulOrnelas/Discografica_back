@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -88,6 +89,6 @@ class UserController extends Controller
     {
         $user->delete();
         return "Usuario eliminado";
-        
+
     }
 }
