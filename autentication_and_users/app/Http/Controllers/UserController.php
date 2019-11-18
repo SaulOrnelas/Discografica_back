@@ -19,7 +19,6 @@ class UserController extends Controller
                 $user = User::where(['email'=> $email])->first();
 
                 if($user['password'] == $password){
-
                     return response()->json(["id" => $user['id'], "name" => $user['name'],"lastname" => $user['lastname'], "phone" => $user['phone'], "address" => $user["address"], "email" => $user['email'], "user_type"=> $user['user_type'] ]);
                     //return response()->json(["message" => "Usuario loggeado", "status" => 1]);
                 }else{
