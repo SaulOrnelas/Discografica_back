@@ -16,6 +16,7 @@ class CreateDiskSalesTable extends Migration
         Schema::create('disk_sales', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('quantity');
+            $table->decimal('price', 8, 2);
             $table->unsignedBigInteger('disk_id');
             $table->foreign('disk_id')->references('id')->on('disks');
             $table->unsignedBigInteger('sale_id');

@@ -17,10 +17,9 @@ class CreateDisksTable extends Migration
             $table->bigIncrements('id');
             $table->string('title', 80);
             $table->string('artist', 50);
-            $table->double('price', 8, 2);
+            $table->decimal('price', 8, 2);
             $table->text('image');
             $table->integer('stock');
-            $table->text('description');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
