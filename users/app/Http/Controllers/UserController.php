@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -52,7 +54,31 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $request["password"] = Hash::make($request->password);
         DB::table('users')->insertGetId($request->all());
+        
+        /*  
+        $data = array(
+            'name' => $request->name,
+        );
+        Mail::send('emails.welcome', $data, function ($message) {
+            $message->from('saulornelas17@gmail.com', 'Discográfica');
+            $message->to($request->email)->subject('Prueba de email en Laravel');
+        });*/
+        return "Usuario insertado";
+    }
+
+    public function send_email(Request $request)
+    {
+        //DB::table('users')->insertGetId($request->all());
+        echo $request->email;
+        $data = array(
+            'name' => $request->name,
+        );
+        Mail::send('emails.welcome', $data, function ($message) {
+            $message->from('saulornelas17@gmail.com', 'Discográfica');
+            $message->to($request->email)->subject('Prueba de email en Laravel');
+        });
         return "Usuario insertado";
     }
 

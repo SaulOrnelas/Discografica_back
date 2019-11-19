@@ -36,7 +36,14 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $sale =  ['user_id' => $request->user_id, 'client_id' => $request->client_id];
+        $id = DB::table('sales')->insertGetId($sale);
+
+        foreach ($request->albums as $album){
+            $album["sale_id"] = $id;
+            DB::table('disk_sales')->insertGetId($album);
+        }
+        return "Venta realiazada ".$id;
     }
 
     /**
