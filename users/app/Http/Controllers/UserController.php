@@ -57,17 +57,18 @@ class UserController extends Controller
         $request["password"] = Hash::make($request->password);
         DB::table('users')->insertGetId($request->all());
         
-        /*  
+        /* Si sirve este código pero esta comentado para que no se envien correos cada que se crea un usuario
         $data = array(
             'name' => $request->name,
         );
-        Mail::send('emails.welcome', $data, function ($message) {
+        Mail::send('emails.welcome', $data, function ($message)  use ($request){
             $message->from('saulornelas17@gmail.com', 'Discográfica');
-            $message->to($request->email)->subject('Prueba de email en Laravel');
-        });*/
+            $message->to($request->email)->subject('Mensaje de bienvenida');
+        });
+        */
         return "Usuario insertado";
     }
-
+/* No quitar sirve para pruebas
     public function send_email(Request $request)
     {
         //DB::table('users')->insertGetId($request->all());
@@ -75,13 +76,13 @@ class UserController extends Controller
         $data = array(
             'name' => $request->name,
         );
-        Mail::send('emails.welcome', $data, function ($message) {
+        Mail::send('emails.welcome', $data, function ($message)  use ($request){
             $message->from('saulornelas17@gmail.com', 'Discográfica');
-            $message->to($request->email)->subject('Prueba de email en Laravel');
+            $message->to($request->email)->subject('Mensaje de bienvenida');
         });
         return "Usuario insertado";
     }
-
+*/
     /**
      * Display the specified resource.
      *
