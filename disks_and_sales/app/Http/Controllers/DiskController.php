@@ -28,7 +28,7 @@ class DiskController extends Controller
     public function store(Request $request)
     {
         DB::table('disks')->insertGetId($request->all());
-        return "Disco insertado";
+        return response()->json(["message" => "Disco insertado"]);
     }
 
     /**
@@ -52,7 +52,7 @@ class DiskController extends Controller
     public function update(Request $request, Disk $disk)
     {
         DB::table('disks')->where('id', $disk->id)->update($request->all());
-        return "Disco modificado";
+        return response()->json(["message" => "Disco modificado"]);
     }
     /**
      * Remove the specified resource from storage.
@@ -63,6 +63,6 @@ class DiskController extends Controller
     public function destroy(Disk $disk)
     {
         $disk->delete();
-        return "Disco eliminado";
+        return response()->json(["message" => "Disco eliminado"]);
     }
 }

@@ -56,17 +56,16 @@ class UserController extends Controller
     {
         $request["password"] = Hash::make($request->password);
         DB::table('users')->insertGetId($request->all());
-        
-        /* Si sirve este código pero esta comentado para que no se envien correos cada que se crea un usuario
+        /*Envío de correos
         $data = array(
             'name' => $request->name,
         );
         Mail::send('emails.welcome', $data, function ($message)  use ($request){
-            $message->from('saulornelas17@gmail.com', 'Discográfica');
+            $message->from('pruebaequipoitl@gmail.com', 'Discográfica');
             $message->to($request->email)->subject('Mensaje de bienvenida');
         });
         */
-        return "Usuario insertado";
+        return response()->json(["message" => "Usuario insertado"]);
     }
 /* No quitar sirve para pruebas
     public function send_email(Request $request)
@@ -104,7 +103,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         DB::table('users')->where('id', $user->id)->update($request->all());
-        return "Usuario actualizado";
+        return response()->json(["message" => "Usuario actualizado"]);
     }
     /**
      * Remove the specified resource from storage.
@@ -115,7 +114,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return "Usuario eliminado";
-
+        return response()->json(["message" => "Usuario eliminado"]);
     }
 }

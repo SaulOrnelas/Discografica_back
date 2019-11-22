@@ -43,7 +43,7 @@ class SaleController extends Controller
             $album["sale_id"] = $id;
             DB::table('disk_sales')->insertGetId($album);
         }
-        return "Venta realiazada ".$id;
+        return response()->json(["message" => "Venta realiazada"]);
     }
 
     /**
