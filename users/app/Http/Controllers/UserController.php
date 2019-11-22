@@ -20,7 +20,8 @@ class UserController extends Controller
             if(User::where(['email'=> $email])->exists()){
                 $user = User::where(['email'=> $email])->first();
 
-                if($user['password'] == $password){
+                //if($user['password'] == $password){
+                if(Hash::check($password, $user['password'])){
 
                     return response()->json(["id" => $user['id'], "name" => $user['name'],"lastname" => $user['lastname'], "phone" => $user['phone'], "address" => $user["address"], "email" => $user['email'], "user_type"=> $user['user_type'] ]);
                     //return response()->json(["message" => "Usuario loggeado", "status" => 1]);
