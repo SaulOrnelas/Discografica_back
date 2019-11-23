@@ -55,34 +55,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request["password"] = Hash::make($request->password);
-        DB::table('users')->insertGetId($request->all());
-        /*Envío de correos
-        $data = array(
-            'name' => $request->name,
-        );
-        Mail::send('emails.welcome', $data, function ($message)  use ($request){
-            $message->from('pruebaequipoitl@gmail.com', 'Discográfica');
-            $message->to($request->email)->subject('Mensaje de bienvenida');
-        });
-        */
-        return response()->json(["message" => "Usuario insertado"]);
+        if(!User::where(['email'=> $request->email])->exists()){
+            $request["password"] = Hash::make($request->password);
+            DB::table('users')->insertGetId($request->all());
+            /*Envío de correos
+            $data = array(
+                'name' => $request->name,
+            );
+            Mail::send('emails.welcome', $data, function ($message)  use ($request){
+                $message->from('pruebaequipoitl@gmail.com', 'Discográfica');
+                $message->to($request->email)->subject('Mensaje de bienvenida');
+            });
+            */
+            return response()->json(["message" => "Usuario insertado", "status" => 1]);
+        } else {
+            return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
+        }
+        
+        
     }
-/* No quitar sirve para pruebas
-    public function send_email(Request $request)
-    {
-        //DB::table('users')->insertGetId($request->all());
-        echo $request->email;
-        $data = array(
-            'name' => $request->name,
-        );
-        Mail::send('emails.welcome', $data, function ($message)  use ($request){
-            $message->from('saulornelas17@gmail.com', 'Discográfica');
-            $message->to($request->email)->subject('Mensaje de bienvenida');
-        });
-        return "Usuario insertado";
-    }
-*/
     /**
      * Display the specified resource.
      *
@@ -103,8 +94,12 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        DB::table('users')->where('id', $user->id)->update($request->all());
-        return response()->json(["message" => "Usuario actualizado"]);
+        if(!User::where(['email'=> $request->email])->exists()){
+            DB::table('users')->where('id', $user->id)->update($request->all());
+            return response()->json(["message" => "Usuario actualizado", "status" => 1]);
+        } else {
+            return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
+        }
     }
     /**
      * Remove the specified resource from storage.
@@ -115,6 +110,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return response()->json(["message" => "Usuario eliminado"]);
+        return response()->json(["message" => "Usuario eliminado", "status" => 1]);
     }
 }
