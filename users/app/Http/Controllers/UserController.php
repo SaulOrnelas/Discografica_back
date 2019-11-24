@@ -19,12 +19,8 @@ class UserController extends Controller
 
             if(User::where(['email'=> $email])->exists()){
                 $user = User::where(['email'=> $email])->first();
-
-                //if($user['password'] == $password){
                 if(Hash::check($password, $user['password'])){
-
                     return response()->json(["id" => $user['id'], "name" => $user['name'],"lastname" => $user['lastname'], "phone" => $user['phone'], "address" => $user["address"], "email" => $user['email'], "user_type"=> $user['user_type'] ]);
-                    //return response()->json(["message" => "Usuario loggeado", "status" => 1]);
                 }else{
                     return response()->json(["message" => "Contraseña incorrecta", "status" => 0]);
                 }
@@ -32,7 +28,7 @@ class UserController extends Controller
                 return response()->json(["message" => "No existe usuario", "status" => 0]);
             }
         }else{
-            return response()->json(["message" => "Ingresar todos los campos"]);
+            return response()->json(["message" => "Ingresar todos los campos", "status" => 0]);
         }
     }
 
