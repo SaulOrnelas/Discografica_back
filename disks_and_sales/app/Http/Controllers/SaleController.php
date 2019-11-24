@@ -45,10 +45,13 @@ class SaleController extends Controller
             $sale =  ['user_id' => $request->user_id, 'client_id' => $request->client_id, 'created_at' => Carbon::now()];
             $id = DB::table('sales')->insertGetId($sale);
             foreach ($request->albums as $album){
+                //Actualizar inventario
+                DB::table('disks')->where('id', $album["disk_id"])->decrement('stock', $album["quantity"]);
+                //Insertar detalle de venta
                 $album["sale_id"] = $id;
                 DB::table('disk_sales')->insertGetId($album);
             }
-            return response()->json(["message" => "Venta realiazada", "status" => 1]);
+            return response()->json(["message" => "Venta realizada", "status" => 1]);
         } else {
             return response()->json(["message" => "El cliente no existe", "status" => 0]);
         }
@@ -60,7 +63,7 @@ class SaleController extends Controller
                                 disk_sales.price as 'Precio', disks.title as 'Título', sales.created_at as 'Fecha' 
                                     from users join sales on users.id = sales.user_id 
                                     join disk_sales on sales.id = disk_sales.sale_id 
-                                    join disks on disk_sales.disk_id = disks.id order by id");
+                                    join disks on disk_sales.disk_id = disks.id order by Fecha desc");
         $sales = DB::table('sales')
             ->join('disk_sales', 'sales.id', '=', 'disk_sales.sale_id')
             ->get();

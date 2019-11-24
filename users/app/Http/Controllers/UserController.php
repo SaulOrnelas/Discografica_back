@@ -36,23 +36,28 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $users = User::all();
         return $users;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function getClients()
+    {
+        $clients = DB::table('users')->where([
+            ['user_type', '=', 'cliente'],
+        ])->get();
+        return $clients;
+    }
+
+    public function getEmployees()
+    {
+        $clients = DB::table('users')->where([
+            ['user_type', '=', 'empleado'],
+        ])->get();
+        return $clients;
+    }
+
     public function store(Request $request)
     {
         if(!User::where(['email'=> $request->email])->exists()){
@@ -74,39 +79,23 @@ class UserController extends Controller
         
         
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(User $user)
     {
         return $user;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, User $user)
     {
-        if(!User::where(['email'=> $request->email])->exists()){
+        if(!User::where([['email', '=' ,$request->email], ['id', '<>', $user->id]])->exists()){
+            $request["password"] = Hash::make($request->password);
             DB::table('users')->where('id', $user->id)->update($request->all());
             return response()->json(["message" => "Usuario actualizado", "status" => 1]);
         } else {
             return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
         }
     }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(User $user)
     {
         $user->delete();

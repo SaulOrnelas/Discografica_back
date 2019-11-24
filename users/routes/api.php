@@ -19,6 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 */
 
 Route::apiResource('users', 'UserController');
-/*No quitar, sirve para pruebas
-Route::post('insertuser','UserController@send_email');*/
 Route::post('login', 'UserController@login');
+Route::get('get_clients', 'UserController@getClients');
+Route::get('get_employees', 'UserController@getEmployees');
