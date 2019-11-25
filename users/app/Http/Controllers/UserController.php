@@ -19,12 +19,8 @@ class UserController extends Controller
 
             if(User::where(['email'=> $email])->exists()){
                 $user = User::where(['email'=> $email])->first();
-
-                //if($user['password'] == $password){
                 if(Hash::check($password, $user['password'])){
-
                     return response()->json(["id" => $user['id'], "name" => $user['name'],"lastname" => $user['lastname'], "phone" => $user['phone'], "address" => $user["address"], "email" => $user['email'], "user_type"=> $user['user_type'] ]);
-                    //return response()->json(["message" => "Usuario loggeado", "status" => 1]);
                 }else{
                     return response()->json(["message" => "Contraseña incorrecta", "status" => 0]);
                 }
@@ -32,89 +28,73 @@ class UserController extends Controller
                 return response()->json(["message" => "No existe usuario", "status" => 0]);
             }
         }else{
-            return response()->json(["message" => "Ingresar todos los campos"]);
+            return response()->json(["message" => "Ingresar todos los campos", "status" => 0]);
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $users = User::all();
         return $users;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function getClients()
+    {
+        $clients = DB::table('users')->where([
+            ['user_type', '=', 'cliente'],
+        ])->get();
+        return $clients;
+    }
+
+    public function getEmployees()
+    {
+        $clients = DB::table('users')->where([
+            ['user_type', '=', 'empleado'],
+        ])->get();
+        return $clients;
+    }
+
     public function store(Request $request)
     {
-        $request["password"] = Hash::make($request->password);
-        DB::table('users')->insertGetId($request->all());
-        /*Envío de correos
-        $data = array(
-            'name' => $request->name,
-        );
-        Mail::send('emails.welcome', $data, function ($message)  use ($request){
-            $message->from('pruebaequipoitl@gmail.com', 'Discográfica');
-            $message->to($request->email)->subject('Mensaje de bienvenida');
-        });
-        */
-        return response()->json(["message" => "Usuario insertado"]);
+        if(!User::where(['email'=> $request->email])->exists()){
+            $request["password"] = Hash::make($request->password);
+            DB::table('users')->insertGetId($request->all());
+            /*Envío de correos
+            $data = array(
+                'name' => $request->name,
+            );
+            Mail::send('emails.welcome', $data, function ($message)  use ($request){
+                $message->from('pruebaequipoitl@gmail.com', 'Discográfica');
+                $message->to($request->email)->subject('Mensaje de bienvenida');
+            });
+            */
+            return response()->json(["message" => "Usuario insertado", "status" => 1]);
+        } else {
+            return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
+        }
+        
+        
     }
-/* No quitar sirve para pruebas
-    public function send_email(Request $request)
-    {
-        //DB::table('users')->insertGetId($request->all());
-        echo $request->email;
-        $data = array(
-            'name' => $request->name,
-        );
-        Mail::send('emails.welcome', $data, function ($message)  use ($request){
-            $message->from('saulornelas17@gmail.com', 'Discográfica');
-            $message->to($request->email)->subject('Mensaje de bienvenida');
-        });
-        return "Usuario insertado";
-    }
-*/
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(User $user)
     {
         return $user;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, User $user)
     {
-        DB::table('users')->where('id', $user->id)->update($request->all());
-        return response()->json(["message" => "Usuario actualizado"]);
+        if(!User::where([['email', '=' ,$request->email], ['id', '<>', $user->id]])->exists()){
+            $request["password"] = Hash::make($request->password);
+            DB::table('users')->where('id', $user->id)->update($request->all());
+            return response()->json(["message" => "Usuario actualizado", "status" => 1]);
+        } else {
+            return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
+        }
     }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(User $user)
     {
         $user->delete();
-        return response()->json(["message" => "Usuario eliminado"]);
+        return response()->json(["message" => "Usuario eliminado", "status" => 1]);
     }
 }
