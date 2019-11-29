@@ -22,13 +22,13 @@ class UserController extends Controller
                 if(Hash::check($password, $user['password'])){
                     return response()->json(["id" => $user['id'], "name" => $user['name'],"lastname" => $user['lastname'], "phone" => $user['phone'], "address" => $user["address"], "email" => $user['email'], "user_type"=> $user['user_type'] ]);
                 }else{
-                    return response()->json(["message" => "Contraseña incorrecta", "status" => 0]);
+                    return response()->json(["message" => "Contraseña incorrecta", "status" => false]);
                 }
             }else{
-                return response()->json(["message" => "No existe usuario", "status" => 0]);
+                return response()->json(["message" => "No existe usuario", "status" => false]);
             }
         }else{
-            return response()->json(["message" => "Ingresar todos los campos", "status" => 0]);
+            return response()->json(["message" => "Ingresar todos los campos", "status" => false]);
         }
     }
 
@@ -68,9 +68,9 @@ class UserController extends Controller
                 $message->to($request->email)->subject('Mensaje de bienvenida');
             });
             */
-            return response()->json(["message" => "Usuario insertado", "status" => 1]);
+            return response()->json(["message" => "Usuario insertado", "status" => true]);
         } else {
-            return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
+            return response()->json(["message" => "El email ya esta registrado", "status" => false]);
         }
         
         
@@ -86,15 +86,15 @@ class UserController extends Controller
         if(!User::where([['email', '=' ,$request->email], ['id', '<>', $user->id]])->exists()){
             $request["password"] = Hash::make($request->password);
             DB::table('users')->where('id', $user->id)->update($request->all());
-            return response()->json(["message" => "Usuario actualizado", "status" => 1]);
+            return response()->json(["message" => "Usuario actualizado", "status" => true]);
         } else {
-            return response()->json(["message" => "El email ya esta registrado", "status" => 0]);
+            return response()->json(["message" => "El email ya esta registrado", "status" => false]);
         }
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return response()->json(["message" => "Usuario eliminado", "status" => 1]);
+        return response()->json(["message" => "Usuario eliminado", "status" => true]);
     }
 }

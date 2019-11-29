@@ -37,10 +37,12 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
+        var_dump($request->client_id);
         $client = DB::table('users')->where([
             ['id', '=', $request->client_id],
             ['user_type', '=', 'cliente'],
         ])->get();
+
         if(sizeof($client)==1){
             $sale =  ['user_id' => $request->user_id, 'client_id' => $request->client_id, 'created_at' => Carbon::now()];
             $id = DB::table('sales')->insertGetId($sale);
@@ -51,11 +53,10 @@ class SaleController extends Controller
                 $album["sale_id"] = $id;
                 DB::table('disk_sales')->insertGetId($album);
             }
-            return response()->json(["message" => "Venta realizada", "status" => 1]);
+            return response()->json(["message" => "Venta realizada", "status" => true]);
         } else {
-            return response()->json(["message" => "El cliente no existe", "status" => 0]);
+            return response()->json(["message" => "El cliente no existe", "status" => false]);
         }
-
     }
 
     public function getSales(){

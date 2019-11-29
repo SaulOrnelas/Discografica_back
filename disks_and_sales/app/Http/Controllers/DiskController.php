@@ -28,7 +28,7 @@ class DiskController extends Controller
     public function store(Request $request)
     {
         DB::table('disks')->insertGetId($request->all());
-        return response()->json(["message" => "Disco insertado", "status" => 1]);
+        return response()->json(["message" => "Disco insertado", "status" => true]);
     }
 
     /**
@@ -49,11 +49,11 @@ class DiskController extends Controller
                 ->where('title', 'like', '%'.$request->title.'%')
                 ->get();
             if(sizeof($disks)==0){
-                return response()->json(["message" => "No se encontraron coincidencias", "status" => 0]);
+                return response()->json(["message" => "No se encontraron coincidencias", "status" => false]);
             }
             return $disks;
         } else {
-            return response()->json(["message" => "No se recibió ningún parametro", "status" => 0]);
+            return response()->json(["message" => "No se recibió ningún parametro", "status" => false]);
         }
     }
 
@@ -67,7 +67,7 @@ class DiskController extends Controller
     public function update(Request $request, Disk $disk)
     {
         DB::table('disks')->where('id', $disk->id)->update($request->all());
-        return response()->json(["message" => "Disco modificado", "status" => 1]);
+        return response()->json(["message" => "Disco modificado", "status" => true]);
     }
     /**
      * Remove the specified resource from storage.
@@ -78,6 +78,6 @@ class DiskController extends Controller
     public function destroy(Disk $disk)
     {
         $disk->delete();
-        return response()->json(["message" => "Disco eliminado", "status" => 1]);
+        return response()->json(["message" => "Disco eliminado", "status" => true]);
     }
 }
