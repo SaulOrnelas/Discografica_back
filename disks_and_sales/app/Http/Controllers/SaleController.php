@@ -37,18 +37,20 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        var_dump($request->client_id);
         $client = DB::table('users')->where([
             ['id', '=', $request->client_id],
             ['user_type', '=', 'cliente'],
         ])->get();
+        
 
         if(sizeof($client)==1){
             $sale =  ['user_id' => $request->user_id, 'client_id' => $request->client_id, 'created_at' => Carbon::now()];
             $id = DB::table('sales')->insertGetId($sale);
+
             foreach ($request->albums as $album){
                 //Actualizar inventario
                 DB::table('disks')->where('id', $album["disk_id"])->decrement('stock', $album["quantity"]);
+
                 //Insertar detalle de venta
                 $album["sale_id"] = $id;
                 DB::table('disk_sales')->insertGetId($album);
@@ -60,11 +62,11 @@ class SaleController extends Controller
     }
 
     public function getSales(){
-        $allsales = DB::select("select sales.id as 'Id', users.name as 'Usuario', sales.client_id as 'Cliente', disk_sales.quantity as 'Cantidad', 
-                                disk_sales.price as 'Precio', disks.title as 'Título', sales.created_at as 'Fecha' 
+        $allsales = DB::select("select sales.id, users.name as 'user', sales.client_id as 'client', disk_sales.quantity, 
+                                disk_sales.price, disks.title, sales.created_at as 'date' 
                                     from users join sales on users.id = sales.user_id 
                                     join disk_sales on sales.id = disk_sales.sale_id 
-                                    join disks on disk_sales.disk_id = disks.id order by Fecha desc");
+                                    join disks on disk_sales.disk_id = disks.id order by date desc");
         $sales = DB::table('sales')
             ->join('disk_sales', 'sales.id', '=', 'disk_sales.sale_id')
             ->get();
