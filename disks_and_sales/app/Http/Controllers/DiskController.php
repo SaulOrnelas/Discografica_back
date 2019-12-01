@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class DiskController extends Controller
 {
+    public function allDisks(){
+        return Disk::all();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,8 +18,8 @@ class DiskController extends Controller
      */
     public function index()
     {
-        $disks = Disk::all();
-        return $disks;
+        $disks = Disk::all()->where("stock", ">", 0);
+        return $disks->toArray();
     }
 
     /**

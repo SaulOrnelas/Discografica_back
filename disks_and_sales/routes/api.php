@@ -20,5 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::apiResource('disks', 'DiskController');
 Route::apiResource('sales', 'SaleController');
+Route::get('get_all_disks', "DiskController@allDisks");
 Route::post('search_disks', 'DiskController@search');
 Route::get('get_sales', 'SaleController@getSales');
